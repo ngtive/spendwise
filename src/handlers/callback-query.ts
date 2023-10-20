@@ -114,6 +114,19 @@ export async function callbackQueryHandler(
     const matcher = /^delete_expense_(.*)$/.exec(callbackQueryData);
     const expenseId = matcher?.[1];
     if (expenseId && isNumeric(expenseId)) {
+      const existCount = await prisma.expense.count({
+        where: {
+          id: parseInt(expenseId),
+          user: { telegramId: telegramId },
+        },
+      });
+
+      if (existCount === 0) {
+        await ctx.reply("اطلاعاتی وجود ندارد!", {
+          reply_markup: generateInitialReplyMarkupKeyboard(),
+        });
+      }
+
       await prisma.expense.delete({
         where: {
           id: parseInt(expenseId),
