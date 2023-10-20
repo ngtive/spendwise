@@ -8,6 +8,8 @@ npm run migrate:deploy
 echo "Executing generate"
 npm run generate
 
+echo "Executing seeder"
+npm run seed:production
 
 echo "Executing run"
 npm run start:production

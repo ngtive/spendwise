@@ -8,6 +8,7 @@
     "start:production": "ts-node src/main.ts",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
+    "seed:production": "ts-node prisma/seed.ts",
     "generate": "prisma generate",
     "start:prod": "ts-node src/main.ts",
     "test": "jest --passWithNoTests"
