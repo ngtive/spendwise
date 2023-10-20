@@ -17,7 +17,7 @@ import {
   getExpensesByLastWeek,
   getExpensesByLastYear,
   getExpensesByToday,
-  getExpensesByYesterday,
+  getExpensesByYesterday
 } from "../services/expense";
 import { logger } from "../logger";
 import { bot } from "../bot";
@@ -30,7 +30,7 @@ import {
   generateDateKeyboard,
   generateInitialReplyMarkupKeyboard,
   generateLabelsReplyMarkup,
-  generateListKeyboard,
+  generateListKeyboard
 } from "../helpers/keyboard";
 
 export async function cancelSessionHandler(
@@ -40,13 +40,13 @@ export async function cancelSessionHandler(
       message: Update.New & Update.NonChannel & Message.TextMessage;
       update_id: number;
     }
-  >,
+  >
 ) {
   const chatId = ctx.update.message.chat.id;
   await redisSession.clearSession(chatId.toString());
   await ctx.reply("انجام شد", {
     reply_to_message_id: ctx.update.message.message_id,
-    reply_markup: generateInitialReplyMarkupKeyboard(),
+    reply_markup: generateInitialReplyMarkupKeyboard()
   });
 }
 
@@ -57,7 +57,7 @@ export async function privateChatTextHandler(
       message: Update.New & Update.NonChannel & Message.TextMessage;
       update_id: number;
     }
-  >,
+  >
 ): Promise<void> {
   const chatId = ctx.update.message.chat.id;
   const messageId = ctx.update.message.message_id;
@@ -76,35 +76,35 @@ export async function privateChatTextHandler(
       case sessions.get_title:
         const title = text;
         await ctx.reply("لطفا عدد مبلغ را بفرستید!", {
-          reply_to_message_id: messageId,
+          reply_to_message_id: messageId
         });
         await redisSession.saveSession(telegramId, {
           name: sessions.get_amount,
           data: {
             title: title,
             label: null,
-            amount: null,
-          },
+            amount: null
+          }
         });
         return;
       case sessions.get_amount:
         const amount = text;
         if (isNumeric(amount)) {
           await ctx.reply("لطفا لیبل را انتخاب کنید!", {
-            reply_markup: await generateLabelsReplyMarkup(),
+            reply_markup: await generateLabelsReplyMarkup()
           });
           await redisSession.saveSession(telegramId, {
             name: sessions.get_label_name,
             data: {
               title: userSession.data.title,
-              amount: amount,
-            },
+              amount: amount
+            }
           });
           return;
         } else {
           await ctx.reply("مقدار وارد شده برای مبلغ اشتباه است!", {
             reply_to_message_id: ctx.message.message_id,
-            reply_markup: generateCancelReplyMarkup(),
+            reply_markup: generateCancelReplyMarkup()
           });
         }
         return;
@@ -117,8 +117,8 @@ export async function privateChatTextHandler(
             label: label?.id,
             title: userSession.data.title,
             amount: userSession.data.amount,
-            date: null,
-          },
+            date: null
+          }
         });
         await ctx.reply(
           "لطفا تاریخ را انتخاب کنید\nفرمت انتخاب تاریخ: 1402-02-02 به شمسی",
@@ -127,9 +127,9 @@ export async function privateChatTextHandler(
               keyboard: generateDateKeyboard(),
               one_time_keyboard: true,
               force_reply: true,
-              resize_keyboard: true,
-            },
-          },
+              resize_keyboard: true
+            }
+          }
         );
         return;
       case sessions.get_date:
@@ -144,7 +144,7 @@ export async function privateChatTextHandler(
               break;
             default:
               await ctx.reply("فرمت تاریخ اشتباه است!", {
-                reply_to_message_id: messageId,
+                reply_to_message_id: messageId
               });
               return;
           }
@@ -156,15 +156,15 @@ export async function privateChatTextHandler(
           labelId ?? undefined,
           userSession.data.amount,
           userSession.data.title,
-          date.toDate(),
+          date.toDate()
         );
         logger.info(
-          `Expense saved for user ${chatId} amount: ${userSession.data.amount}`,
+          `Expense saved for user ${chatId} amount: ${userSession.data.amount}`
         );
         await redisSession.clearSession(telegramId);
 
         await ctx.reply("ثبت شد!", {
-          reply_markup: generateInitialReplyMarkupKeyboard(),
+          reply_markup: generateInitialReplyMarkupKeyboard()
         });
         return;
       case sessions.add_description:
@@ -172,15 +172,15 @@ export async function privateChatTextHandler(
         if (isNumeric(expenseId)) {
           await prisma.expense.update({
             where: {
-              id: parseInt(expenseId),
+              id: parseInt(expenseId)
             },
             data: {
-              description: text,
-            },
+              description: text
+            }
           });
           await redisSession.clearSession(telegramId);
           await ctx.reply("توضیحات با موفقیت اضافه شد!", {
-            reply_markup: generateInitialReplyMarkupKeyboard(),
+            reply_markup: generateInitialReplyMarkupKeyboard()
           });
         }
         break;
@@ -190,18 +190,18 @@ export async function privateChatTextHandler(
             name: text,
             createdBy: {
               connect: {
-                telegramId: telegramId,
-              },
+                telegramId: telegramId
+              }
             },
-            approved: false,
-          },
+            approved: false
+          }
         });
         await ctx.reply(
           "درخواست شما به مدیریت داده شد بعد از تایید به لیست اضافه می شود!",
           {
             reply_to_message_id: messageId,
-            reply_markup: generateInitialReplyMarkupKeyboard(),
-          },
+            reply_markup: generateInitialReplyMarkupKeyboard()
+          }
         );
         if (process.env.ADMIN_TELEGRAM_ID) {
           await bot.telegram.sendMessage(
@@ -213,16 +213,16 @@ export async function privateChatTextHandler(
                   [
                     {
                       text: "تایید",
-                      callback_data: `accept_label_${waitLabels.id}`,
+                      callback_data: `accept_label_${waitLabels.id}`
                     },
                     {
                       text: "رد",
-                      callback_data: `reject_label_${waitLabels.id}`,
-                    },
-                  ],
-                ],
-              },
-            },
+                      callback_data: `reject_label_${waitLabels.id}`
+                    }
+                  ]
+                ]
+              }
+            }
           );
         }
         await redisSession.clearSession(telegramId);
@@ -245,18 +245,18 @@ export async function privateChatTextHandler(
         data: {
           title: null,
           label: null,
-          amount: null,
-        },
+          amount: null
+        }
       });
       await ctx.reply("لطفا موضوع خرج کرد را وارد کنید", {
         reply_to_message_id: messageId,
-        reply_markup: generateCancelReplyMarkup(),
+        reply_markup: generateCancelReplyMarkup()
       });
       return;
     case "لیست":
       await ctx.reply("انتخاب کنید", {
         reply_markup: generateListKeyboard(),
-        reply_to_message_id: ctx.update.message.message_id,
+        reply_to_message_id: ctx.update.message.message_id
       });
       return;
     case "امروز":
@@ -264,11 +264,14 @@ export async function privateChatTextHandler(
         generateMessageFromExpense(await getExpensesByToday(telegramId)),
         {
           reply_markup: {
+            keyboard: generateInitialReplyMarkupKeyboard().keyboard,
+            resize_keyboard: true,
+            one_time_keyboard: true,
             inline_keyboard: [
-              [{ text: "دریافت اکسل", callback_data: "excel_current_day" }],
-            ],
-          },
-        },
+              [{ text: "دریافت اکسل", callback_data: "excel_current_day" }]
+            ]
+          }
+        }
       );
       return;
     case "دیروز":
@@ -276,12 +279,14 @@ export async function privateChatTextHandler(
         generateMessageFromExpense(await getExpensesByYesterday(telegramId)),
         {
           reply_markup: {
-            ...generateInitialReplyMarkupKeyboard(),
+            keyboard: generateInitialReplyMarkupKeyboard().keyboard,
+            resize_keyboard: true,
+            one_time_keyboard: true,
             inline_keyboard: [
-              [{ text: "دریافت اکسل", callback_data: "excel_passed_day" }],
-            ],
-          },
-        },
+              [{ text: "دریافت اکسل", callback_data: "excel_passed_day" }]
+            ]
+          }
+        }
       );
       return;
     case "ماه جاری":
@@ -289,12 +294,14 @@ export async function privateChatTextHandler(
         generateMessageFromExpense(await getExpensesByCurrentMonth(telegramId)),
         {
           reply_markup: {
-            ...generateInitialReplyMarkupKeyboard(),
+            keyboard: generateInitialReplyMarkupKeyboard().keyboard,
+            resize_keyboard: true,
+            one_time_keyboard: true,
             inline_keyboard: [
-              [{ text: "دریافت اکسل", callback_data: "excel_current_month" }],
-            ],
-          },
-        },
+              [{ text: "دریافت اکسل", callback_data: "excel_current_month" }]
+            ]
+          }
+        }
       );
       return;
     case "ماه گذشته":
@@ -302,12 +309,14 @@ export async function privateChatTextHandler(
         generateMessageFromExpense(await getExpensesByLastMonth(telegramId)),
         {
           reply_markup: {
-            ...generateInitialReplyMarkupKeyboard(),
+            keyboard: generateInitialReplyMarkupKeyboard().keyboard,
+            resize_keyboard: true,
+            one_time_keyboard: true,
             inline_keyboard: [
-              [{ text: "دریافت اکسل", callback_data: "excel_passed_month" }],
-            ],
-          },
-        },
+              [{ text: "دریافت اکسل", callback_data: "excel_passed_month" }]
+            ]
+          }
+        }
       );
       return;
     case "هفته جاری":
@@ -315,12 +324,14 @@ export async function privateChatTextHandler(
         generateMessageFromExpense(await getExpensesByCurrentWeek(telegramId)),
         {
           reply_markup: {
-            ...generateInitialReplyMarkupKeyboard(),
+            keyboard: generateInitialReplyMarkupKeyboard().keyboard,
+            resize_keyboard: true,
+            one_time_keyboard: true,
             inline_keyboard: [
-              [{ text: "دریافت اکسل", callback_data: "excel_current_week" }],
-            ],
-          },
-        },
+              [{ text: "دریافت اکسل", callback_data: "excel_current_week" }]
+            ]
+          }
+        }
       );
       return;
     case "هفته گذشته":
@@ -328,12 +339,14 @@ export async function privateChatTextHandler(
         generateMessageFromExpense(await getExpensesByLastWeek(telegramId)),
         {
           reply_markup: {
-            ...generateInitialReplyMarkupKeyboard(),
+            keyboard: generateInitialReplyMarkupKeyboard().keyboard,
+            resize_keyboard: true,
+            one_time_keyboard: true,
             inline_keyboard: [
-              [{ text: "دریافت اکسل", callback_data: "excel_passed_week" }],
-            ],
-          },
-        },
+              [{ text: "دریافت اکسل", callback_data: "excel_passed_week" }]
+            ]
+          }
+        }
       );
       return;
     case "سال جاری":
@@ -341,12 +354,14 @@ export async function privateChatTextHandler(
         generateMessageFromExpense(await getExpensesByCurrentYear(telegramId)),
         {
           reply_markup: {
-            ...generateInitialReplyMarkupKeyboard(),
+            keyboard: generateInitialReplyMarkupKeyboard().keyboard,
+            resize_keyboard: true,
+            one_time_keyboard: true,
             inline_keyboard: [
-              [{ text: "دریافت اکسل", callback_data: "excel_current_year" }],
-            ],
-          },
-        },
+              [{ text: "دریافت اکسل", callback_data: "excel_current_year" }]
+            ]
+          }
+        }
       );
       return;
     case "سال گذشته":
@@ -354,19 +369,25 @@ export async function privateChatTextHandler(
         generateMessageFromExpense(await getExpensesByLastYear(telegramId)),
         {
           reply_markup: {
-            ...generateInitialReplyMarkupKeyboard(),
+            keyboard: generateInitialReplyMarkupKeyboard().keyboard,
+            resize_keyboard: true,
+            one_time_keyboard: true,
             inline_keyboard: [
-              [{ text: "دریافت اکسل", callback_data: "excel_passed_year" }],
-            ],
-          },
-        },
+              [{ text: "دریافت اکسل", callback_data: "excel_passed_year" }]
+            ]
+          }
+        }
       );
       return;
     case "اکسل کل":
       const excelBuffer = await getExpensesAllInExcel(telegramId);
       await ctx.replyWithDocument({
         source: excelBuffer,
-        filename: `${moment().format("jYYYY-jMM-jDD")}.xlsx`,
+        filename: `${moment().format("jYYYY-jMM-jDD")}.xlsx`
+      }, {
+        reply_markup: {
+          ...generateInitialReplyMarkupKeyboard()
+        }
       });
       return;
     default:
@@ -381,7 +402,7 @@ export async function textHandler(
       message: Update.New & Update.NonChannel & Message.TextMessage;
       update_id: number;
     }
-  >,
+  >
 ) {
   if (ctx.update.message.chat.type === "private") {
     await privateChatTextHandler(ctx);
