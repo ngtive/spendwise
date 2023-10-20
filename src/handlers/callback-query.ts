@@ -10,6 +10,7 @@ import {
   generateCancelReplyMarkup,
   generateInitialReplyMarkupKeyboard,
 } from "../helpers/keyboard";
+import exp from "constants";
 
 export async function callbackQueryHandler(
   ctx: NarrowedContext<
@@ -18,6 +19,7 @@ export async function callbackQueryHandler(
   >,
 ) {
   const callbackQueryData = ctx.update.callback_query.data;
+  const telegramId = ctx.update.callback_query.from.id.toString();
   if (/^add_description_(.*)$/.test(callbackQueryData)) {
     await addDescriptionHandler(ctx);
   } else if (/^excel_(.*)$/.test(callbackQueryData)) {
@@ -107,6 +109,22 @@ export async function callbackQueryHandler(
           reply_markup: generateInitialReplyMarkupKeyboard(),
         });
       }
+    }
+  } else if (/^delete_expense_(.*)$/.test(callbackQueryData)) {
+    const matcher = /^delete_expense_(.*)$/.exec(callbackQueryData);
+    const expenseId = matcher?.[1];
+    if (expenseId && isNumeric(expenseId)) {
+      await prisma.expense.delete({
+        where: {
+          id: parseInt(expenseId),
+          user: {
+            telegramId: telegramId,
+          },
+        },
+      });
+      await ctx.reply("حذف شد!", {
+        reply_markup: generateInitialReplyMarkupKeyboard(),
+      });
     }
   }
 }
