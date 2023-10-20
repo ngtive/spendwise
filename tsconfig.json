@@ -1,12 +1,5 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
-    "module": "NodeNext",
-    "types": [
-      "telegraf-session-redis/lib/session.d.ts",
-      "src/declare-session.d.ts",
-      "jest"
-    ]
   },
   "exclude": [
     "node_modules"
