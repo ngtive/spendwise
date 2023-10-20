@@ -1,14 +1,6 @@
 import moment from "moment-jalaali";
 import { Expense, Label } from "@prisma/client";
 
-export function generateMonthNames(year: number = moment().jYear()) {
-  return [...Array.from(Array(12 - 1 + 1).keys(), (num) => num + 1)].map(
-    (m) => {
-      return moment(`${year}-${m}-1`, "jYYYY-jM-jD");
-    },
-  );
-}
-
 export function isNumeric(str: string): boolean {
   return !isNaN(Number(str));
 }
