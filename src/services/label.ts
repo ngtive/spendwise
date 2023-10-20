@@ -13,10 +13,3 @@ export async function getLabelByName(labelName: string | null) {
   });
 }
 
-export async function getLabelById(labelId: number) {
-  return prisma.label.findUnique({
-    where: {
-      id: labelId,
-    },
-  });
-}
