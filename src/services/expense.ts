@@ -43,64 +43,6 @@ export async function createExpense(
   });
 }
 
-export async function listExpenses(telegramId: string) {
-  return prisma.expense.findMany({
-    where: {
-      user: {
-        telegramId: telegramId,
-      },
-    },
-    include: {},
-  });
-}
-
-export async function getExpense(telegramId: string, expenseId: number) {
-  return prisma.expense.findFirst({
-    where: {
-      id: expenseId,
-      user: {
-        telegramId: telegramId,
-      },
-    },
-    include: {
-      user: {},
-      label: {},
-    },
-  });
-}
-
-export async function getExpensesByGtAmount(
-  telegramId: string,
-  gtAmount: string,
-) {
-  return prisma.expense.findMany({
-    where: {
-      user: {
-        telegramId: telegramId,
-      },
-      amount: {
-        gte: gtAmount,
-      },
-    },
-  });
-}
-
-export async function getExpensesByLtAmount(
-  telegramId: string,
-  ltAmount: string,
-) {
-  return prisma.expense.findMany({
-    where: {
-      user: {
-        telegramId: telegramId,
-      },
-      amount: {
-        lte: ltAmount,
-      },
-    },
-  });
-}
-
 export async function getExpensesByToday(telegramId: string) {
   const today = moment().startOf("day");
 
