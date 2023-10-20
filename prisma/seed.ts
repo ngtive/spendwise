@@ -3,10 +3,18 @@ import { PrismaClient } from "@prisma/client";
 const prismaClient = new PrismaClient();
 
 async function main() {
-  await prismaClient.label.create({
-    data: {
-      name: "مخارج شخصی",
-    },
+  await prismaClient.label.createMany({
+    data: [
+      {
+        name: "مخارج شخصی",
+      },
+      {
+        name: 'خرید خونه',
+      },
+      {
+        name: 'مخارج سفر',
+      },
+    ],
   });
 }
 
