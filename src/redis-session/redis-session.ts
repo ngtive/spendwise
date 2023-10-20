@@ -36,28 +36,6 @@ class RedisSession {
       JSON.stringify(session),
     ));
   }
-
-  middleware() {
-    return (ctx: Context, next: Function) => {
-      const key = ctx?.message?.chat.id
-        ? ctx?.message?.chat.id.toString()
-        : null;
-      if (!key) {
-        return next();
-      }
-      return this.getSession(key).then((session) => {
-        Object.defineProperty(ctx, "session", {
-          get: function () {
-            return session;
-          },
-          set: function (newValue) {
-            session = Object.assign({}, newValue);
-          },
-        });
-        return next().then(() => this.saveSession(key, session));
-      });
-    };
-  }
 }
 
 export default new RedisSession(3600);
