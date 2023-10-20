@@ -7,7 +7,6 @@ services:
       - redis
     container_name: spend-wise-node
     pull_policy: always
-    cpu_percent: 20
     environment:
       DATABASE_URL: ${DATABASE_URL}
       REDIS_URL: ${REDIS_URL}
@@ -15,9 +14,14 @@ services:
       TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME}
       NODE_ENV: production
       ADMIN_TELEGRAM_ID: ${ADMIN_TELEGRAM_ID}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: true
 
     networks:
-      spend-wise-node:
+      - spend-wise-node
+      - postgres
+      - redis
 
   postgres:
     container_name: postgres
@@ -31,6 +35,8 @@ services:
       - ~/postgres/data:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    networks:
+      - postgres
 
   redis:
     container_name: redis
@@ -40,6 +46,8 @@ services:
       - 6379:6379
     volumes:
       - ~/redis/data:/data
+    networks:
+      - redis
 
 networks:
   redis:
