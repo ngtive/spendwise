@@ -37,6 +37,12 @@ export async function detailCommandHandler(
               ],
               [
                 {
+                  text: 'ویرایش',
+                  callback_data: `edit_expense_${expenseId}`
+                }
+              ],
+              [
+                {
                   text: "حذف",
                   callback_data: `delete_expense_${expenseId}`
                 }

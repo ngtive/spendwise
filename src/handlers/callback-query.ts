@@ -11,6 +11,9 @@ import {
   generateInitialReplyMarkupKeyboard,
 } from "../helpers/keyboard";
 import exp from "constants";
+import { match } from "assert";
+import { isNumber } from "util";
+import { sessions } from "../const/sessions";
 
 export async function callbackQueryHandler(
   ctx: NarrowedContext<
@@ -138,6 +141,66 @@ export async function callbackQueryHandler(
       await ctx.reply("حذف شد!", {
         reply_markup: generateInitialReplyMarkupKeyboard(),
       });
+    }
+  } else if (/^edit_expense_(.*)_amount$/.test(callbackQueryData)) {
+    const matcher = /^edit_expense_(.*)_amount$/.exec(callbackQueryData);
+    if (matcher && isNumeric(matcher[1])) {
+      const expenseId = matcher[1]
+      const existsCount = await prisma.expense.count({
+        where: {
+          id: parseInt(expenseId),
+          user: {
+            telegramId: telegramId,
+          }
+        }
+      });
+      if (existsCount === 1) {
+        await redisSession.saveSession(telegramId, {
+          name: sessions.get_amount,
+          edit: true,
+          data: {
+            expenseId: matcher
+          }
+        });
+        await ctx.reply('مبلغ جدید را بفرستید', {
+          reply_markup: generateCancelReplyMarkup(),
+        });
+      }
+    }
+  } else if (/^edit_expense_(.*)_title$/.test(callbackQueryData)) {
+
+  } else if (/^edit_expense_(.*)_date$/.test(callbackQueryData)) {
+
+  } else if (/^edit_expense_(.*)_label$/.test(callbackQueryData)) {
+
+  } else if (/^edit_expense_(.*)$/.test(callbackQueryData)) {
+    const matcher = /^edit_expense_(.*)$/.exec(callbackQueryData);
+    if (matcher && isNumeric(matcher[1])) {
+      const expenseId = matcher[1];
+      const existsCount = await prisma.expense.count({
+        where: {
+          id: parseInt(expenseId),
+          user: {
+            telegramId: telegramId,
+          },
+        },
+      });
+      if (existsCount) {
+        await ctx.editMessageText("کدوم اطلاعات رو میخوای ویرایش کنی", {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                { text: "قیمت", callback_data: `edit_expense_${expenseId}_amount` },
+                { text: "موضوع", callback_data: `edit_expense_${expenseId}_title` },
+              ],
+              [
+                { text: "تاریخ", callback_data: `edit_expense_${expenseId}_date` },
+                { text: "لیبل", callback_data: `edit_expense_${expenseId}_label` },
+              ],
+            ],
+          },
+        });
+      }
     }
   }
 }

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "tests/**/*.ts"
+  ],
+  "extends": "@tsconfig/node18/tsconfig.json"
+}
