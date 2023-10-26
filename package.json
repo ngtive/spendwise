@@ -26,6 +26,7 @@
     "redis": "^4.6.8",
     "socks-proxy-agent": "^8.0.2",
     "telegraf": "^4.13.1",
+    "winston": "^3.11.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {
