@@ -1,6 +1,5 @@
 import { redisClient } from "../redis";
 import Redis from "ioredis";
-import { Context } from "telegraf";
 
 interface OptionInterface {
   ttl: number;

@@ -8,7 +8,6 @@ import { textHandler } from "./handlers/text-handler";
 import { callbackQueryHandler } from "./handlers/callback-query";
 import moment from "moment-jalaali";
 import { redisClient } from "./redis";
-import { botQueue } from "./queue/bot-queue";
 
 moment.locale("fa");
 
@@ -23,11 +22,6 @@ bot.use(async (ctx: any, next) => {
   }
   await next();
 });
-
-
-botQueue.add('test', {
-  test: 1,
-})
 
 redisClient.on("connect", () => {
   logger.info("Redis connected !");

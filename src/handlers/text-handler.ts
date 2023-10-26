@@ -32,6 +32,8 @@ import {
   generateLabelsReplyMarkup,
   generateListKeyboard,
 } from "../helpers/keyboard";
+import { notificationHandler } from "./administrative/commands/notification";
+import { getNotificationMessage } from "./administrative/sessions/get-notification-message";
 
 export async function cancelSessionHandler(
   ctx: NarrowedContext<
@@ -73,6 +75,9 @@ export async function privateChatTextHandler(
   if (userSession) {
     const sessionName = userSession.name;
     switch (sessionName) {
+      case sessions.get_notification_message:
+        await getNotificationMessage(ctx);
+        break;
       case sessions.get_title:
         const title = text;
         await ctx.reply("لطفا عدد مبلغ را بفرستید!", {
@@ -371,6 +376,16 @@ export async function privateChatTextHandler(
       return;
     default:
       break;
+  }
+
+  if (telegramId === process.env.ADMIN_TELEGRAM_ID) {
+    switch (text) {
+      case '/notification':
+        await notificationHandler(ctx);
+        break;
+      default:
+        break;
+    }
   }
 }
 
