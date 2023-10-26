@@ -21,9 +21,8 @@ services:
       PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: true
 
     networks:
-      - spend-wise-node
-      - postgres
-      - redis
+      - spendwise-network
+
 
   postgres:
     container_name: postgres
@@ -35,26 +34,17 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - ~/postgres/data:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
     networks:
-      - postgres
+      - spendwise-network
 
   redis:
     container_name: redis
     image: redis
     restart: always
-    ports:
-      - 6379:6379
     volumes:
       - ~/redis/data:/data
     networks:
-      - redis
+      - spendwise-network
 
 networks:
-  redis:
-    driver: bridge
-  postgres:
-    driver: bridge
-  spend-wise-node:
-    driver: bridge
+  spendwise-network:
