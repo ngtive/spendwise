@@ -1,10 +1,7 @@
 import { Context, NarrowedContext } from "telegraf";
-import { createNewUserIfNotExists } from "../../services/user";
 import { Message, Update } from "telegraf/types";
 import { generateInitialReplyMarkupKeyboard } from "../../helpers/keyboard";
 import { prisma } from "../../prisma";
-import redisSession from "../../redis-session/redis-session";
-import { da } from "@faker-js/faker";
 
 export async function startCommandHandler(
   ctx: NarrowedContext<

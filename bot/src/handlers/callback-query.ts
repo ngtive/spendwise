@@ -10,10 +10,8 @@ import {
   generateCancelReplyMarkup,
   generateInitialReplyMarkupKeyboard,
 } from "../helpers/keyboard";
-import exp from "constants";
-import { match } from "assert";
-import { isNumber } from "util";
 import { sessions } from "../const/sessions";
+import { Calendar, Currency } from "@prisma/client";
 
 export async function callbackQueryHandler(
   ctx: NarrowedContext<
@@ -145,24 +143,24 @@ export async function callbackQueryHandler(
   } else if (/^edit_expense_(.*)_amount$/.test(callbackQueryData)) {
     const matcher = /^edit_expense_(.*)_amount$/.exec(callbackQueryData);
     if (matcher && isNumeric(matcher[1])) {
-      const expenseId = matcher[1]
+      const expenseId = matcher[1];
       const existsCount = await prisma.expense.count({
         where: {
           id: parseInt(expenseId),
           user: {
             telegramId: telegramId,
-          }
-        }
+          },
+        },
       });
       if (existsCount === 1) {
         await redisSession.saveSession(telegramId, {
           name: sessions.get_amount,
           edit: true,
           data: {
-            expenseId: matcher
-          }
+            expenseId: matcher,
+          },
         });
-        await ctx.reply('مبلغ جدید را بفرستید', {
+        await ctx.reply("مبلغ جدید را بفرستید", {
           reply_markup: generateCancelReplyMarkup(),
         });
       }
@@ -201,6 +199,89 @@ export async function callbackQueryHandler(
           },
         });
       }
+    }
+  } else if (/^set-currency-(.*)$/.test(callbackQueryData)) {
+    const matcher = /^set-currency-(.*)$/.exec(callbackQueryData);
+    let currency: Currency = Currency.usd;
+    if (matcher) {
+      switch (matcher[1]) {
+        case "usd":
+          currency = Currency.usd;
+          break;
+        case "irr":
+          currency = Currency.irr;
+          break;
+        case "toman":
+          currency = Currency.toman;
+          break;
+        case "euro":
+          currency = Currency.euro;
+          break;
+        case "pound":
+          currency = Currency.pound;
+          break;
+        default:
+          currency = Currency.usd;
+          break;
+      }
+      const user = await prisma.user.update({
+        where: {
+          telegramId: telegramId,
+        },
+        data: {
+          currency: currency,
+        },
+      });
+      if (!user.calendar) {
+        await ctx.editMessageText("You did not set your calendar type, please choose one", {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "Jalali (شمسی)",
+                  callback_data: "set-calendar-jalali",
+                },
+                {
+                  text: "Georgian",
+                  callback_data: "set-calendar-georgian",
+                },
+              ],
+            ],
+          },
+        });
+      } else {
+        await ctx.deleteMessage();
+        await ctx.reply(`Hello, ${ctx.update.callback_query.from.first_name}`, {
+          reply_markup: generateInitialReplyMarkupKeyboard(),
+        });
+      }
+    }
+  } else if (/^set-calendar-(.*)$/.test(callbackQueryData)) {
+    const matcher = /^set-calendar-(.*)$/.exec(callbackQueryData);
+    let calendar: Calendar = Calendar.georgian;
+    if (matcher) {
+      switch (matcher[1]) {
+        case "jalali":
+          calendar = Calendar.jalali;
+          break;
+        case "georgian":
+          calendar = Calendar.georgian;
+          break;
+      }
+
+      await prisma.user.update({
+        where: {
+          telegramId: telegramId,
+        },
+        data: {
+          calendar: calendar,
+        },
+      });
+
+      await ctx.deleteMessage();
+      await ctx.reply(`Hello, ${ctx.update.callback_query.from.first_name}`, {
+        reply_markup: generateInitialReplyMarkupKeyboard(),
+      });
     }
   }
 }

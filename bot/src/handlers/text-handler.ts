@@ -46,7 +46,7 @@ export async function cancelSessionHandler(
 ) {
   const chatId = ctx.update.message.chat.id;
   await redisSession.clearSession(chatId.toString());
-  await ctx.reply("انجام شد", {
+  await ctx.reply("Done !", {
     reply_to_message_id: ctx.update.message.message_id,
     reply_markup: generateInitialReplyMarkupKeyboard(),
   });
@@ -66,7 +66,7 @@ export async function privateChatTextHandler(
   const telegramId = chatId.toString();
   const text = ctx.update.message.text;
 
-  if (text === "انصراف") {
+  if (text === "Cancel") {
     await cancelSessionHandler(ctx);
     return;
   }

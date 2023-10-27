@@ -4,7 +4,7 @@ import { getLabels } from "../services/label";
 
 export const generateDateKeyboard = (): KeyboardButton[][] => {
   let keyboard = [];
-  keyboard.push([{ text: "امروز" }, { text: "دیروز" }]);
+  keyboard.push([{ text: "Now" }, { text: "Yesterday" }]);
 
   let dayCounter = 1;
   for (const _ of new Array(10)) {
@@ -36,11 +36,11 @@ export const generateCancelReplyMarkup = (): ReplyKeyboardMarkup => {
 export const generateListKeyboard = (): ReplyKeyboardMarkup => {
   return {
     keyboard: [
-      [{ text: "امروز" }, { text: "دیروز" }],
-      [{ text: "ماه جاری" }, { text: "ماه گذشته" }],
-      [{ text: "هفته جاری" }, { text: "هفته گذشته" }],
-      [{ text: "سال جاری" }, { text: "سال گذشته" }],
-      [{ text: "اکسل کل" }],
+      [{ text: "Today" }, { text: "Yesterday" }],
+      [{ text: "Current month" }, { text: "Passed month" }],
+      [{ text: "Current week" }, { text: "Passed week" }],
+      [{ text: "Current year" }, { text: "Passed year" }],
+      [{ text: "All in excel" }],
     ],
     resize_keyboard: true,
     one_time_keyboard: true,
@@ -63,7 +63,7 @@ export const generateLabelsReplyMarkup =
         rowCounter = 0;
       }
     });
-    keyboard.push([{ text: "بدون لیبل" }]);
+    keyboard.push([{ text: "Without label" }]);
     return {
       keyboard: keyboard,
       resize_keyboard: true,
@@ -73,7 +73,7 @@ export const generateLabelsReplyMarkup =
 
 export const generateInitialReplyMarkupKeyboard = (): ReplyKeyboardMarkup => {
   return {
-    keyboard: [[{ text: "ثبت مخارج" }, { text: "لیست" }]],
+    keyboard: [[{ text: "Submit expense" }, { text: "List" }]],
     resize_keyboard: true,
     one_time_keyboard: true,
   };

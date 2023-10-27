@@ -27,10 +27,11 @@ model User {
   telegramId    String         @unique
   firstName     String
   lastName      String?
-  username      String?        @unique
+  username      String?
   expenses      Expense[]
   createdAt     DateTime       @default(now())
-  currency      String         @default("$") @map("")
+  currency      Currency?
+  calendar      Calendar?
   waitinglabels WaitingLabel[]
 }
 
@@ -47,4 +48,17 @@ model WaitingLabel {
   createdAt   DateTime @default(now())
   createdBy   User     @relation(fields: [createdById], references: [id])
   createdById Int
+}
+
+enum Currency {
+  usd
+  irr
+  toman
+  pound
+  euro
+}
+
+enum Calendar {
+  jalali
+  georgian
 }
