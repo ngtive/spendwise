@@ -1,7 +1,7 @@
 services:
 
   spend-wise-node:
-    build: .
+    build: ..
     depends_on:
       - postgres
       - redis

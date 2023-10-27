@@ -244,7 +244,7 @@ export async function privateChatTextHandler(
     case "/create_label":
       await createLabelCommandHandler(ctx);
       return;
-    case "ثبت مخارج":
+    case "Submit expense":
       await redisSession.saveSession(telegramId, {
         name: sessions.get_title,
         data: {
@@ -258,13 +258,13 @@ export async function privateChatTextHandler(
         reply_markup: generateCancelReplyMarkup(),
       });
       return;
-    case "لیست":
+    case "List":
       await ctx.reply("انتخاب کنید", {
         reply_markup: generateListKeyboard(),
         reply_to_message_id: ctx.update.message.message_id,
       });
       return;
-    case "امروز":
+    case "Today":
       await ctx.reply(
         generateMessageFromExpense(await getExpensesByToday(telegramId)),
         {
@@ -276,7 +276,7 @@ export async function privateChatTextHandler(
         },
       );
       return;
-    case "دیروز":
+    case "Yesterday":
       await ctx.reply(
         generateMessageFromExpense(await getExpensesByYesterday(telegramId)),
         {
@@ -289,7 +289,7 @@ export async function privateChatTextHandler(
         },
       );
       return;
-    case "ماه جاری":
+    case "Current month":
       await ctx.reply(
         generateMessageFromExpense(await getExpensesByCurrentMonth(telegramId)),
         {
@@ -302,7 +302,7 @@ export async function privateChatTextHandler(
         },
       );
       return;
-    case "ماه گذشته":
+    case "Passed month":
       await ctx.reply(
         generateMessageFromExpense(await getExpensesByLastMonth(telegramId)),
         {
@@ -315,7 +315,7 @@ export async function privateChatTextHandler(
         },
       );
       return;
-    case "هفته جاری":
+    case "Current week":
       await ctx.reply(
         generateMessageFromExpense(await getExpensesByCurrentWeek(telegramId)),
         {
@@ -328,7 +328,7 @@ export async function privateChatTextHandler(
         },
       );
       return;
-    case "هفته گذشته":
+    case "Passed week":
       await ctx.reply(
         generateMessageFromExpense(await getExpensesByLastWeek(telegramId)),
         {
@@ -341,7 +341,7 @@ export async function privateChatTextHandler(
         },
       );
       return;
-    case "سال جاری":
+    case "Current year":
       await ctx.reply(
         generateMessageFromExpense(await getExpensesByCurrentYear(telegramId)),
         {
@@ -354,7 +354,7 @@ export async function privateChatTextHandler(
         },
       );
       return;
-    case "سال گذشته":
+    case "Passed year":
       await ctx.reply(
         generateMessageFromExpense(await getExpensesByLastYear(telegramId)),
         {
@@ -367,7 +367,7 @@ export async function privateChatTextHandler(
         },
       );
       return;
-    case "اکسل کل":
+    case "All in excel":
       const excelBuffer = await getExpensesAllInExcel(telegramId);
       await ctx.replyWithDocument({
         source: excelBuffer,

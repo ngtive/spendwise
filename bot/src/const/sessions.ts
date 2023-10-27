@@ -6,7 +6,7 @@ export const sessions = {
   get_date: "get_date",
   create_label: "create_label",
   add_description: "add_description",
-  get_notification_message: 'get_notification_message'
+  get_notification_message: 'get_notification_message',
 };
 
 export const dateFormat = {

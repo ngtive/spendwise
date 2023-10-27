@@ -30,6 +30,7 @@ model User {
   username      String?        @unique
   expenses      Expense[]
   createdAt     DateTime       @default(now())
+  currency      String         @default("$") @map("")
   waitinglabels WaitingLabel[]
 }
 

@@ -4,14 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "nodemon src/main.ts",
-    "start:production": "ts-node src/main.ts",
-    "migrate:dev": "prisma migrate dev",
-    "migrate:deploy": "prisma migrate deploy",
-    "seed:production": "ts-node prisma/seed.ts",
-    "generate": "prisma generate",
-    "start:prod": "ts-node src/main.ts",
-    "test": "jest --passWithNoTests"
+    "start:dev": "../node_modules/.bin/nodemon src/main.ts",
+    "start:production": "../node_modules/.bin/ts-node src/main.ts",
+    "migrate:dev": "../node_modules/.bin/prisma migrate dev",
+    "migrate:deploy": "../node_modules/.bin/prisma migrate deploy",
+    "seed:production": "../node_modules/.bin/ts-node prisma/seed.ts",
+    "generate": "../node_modules/.bin/prisma generate",
+    "start:prod": "../node_modules/.bin/ts-node src/main.ts",
+    "test": "../node_modules/.bin/jest --passWithNoTests"
   },
   "author": "",
   "license": "ISC",
